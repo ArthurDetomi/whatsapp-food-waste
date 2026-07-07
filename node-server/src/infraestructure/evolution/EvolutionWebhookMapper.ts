@@ -1,7 +1,8 @@
 import { IncomingMessage } from "../../domain/entities/IncomingMessage.js";
+import { MessageMapper } from "../../domain/ports/MessageMapper.js";
 
-export class EvolutionWebhookMapper {
-  static toDomain(payload: any): IncomingMessage {
+export class EvolutionWebhookMapper implements MessageMapper<any> {
+  public toDomain(payload: any): IncomingMessage {
     const data = payload.data;
 
     const name = data.Info.PushName;

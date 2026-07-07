@@ -4,13 +4,16 @@ import { Request, Response } from "express";
 
 import { ReceiveMessageUseCase } from "../../../application/use-cases/ReceiveMessageUseCase.js";
 
-import { EvolutionWebhookMapper } from "../../evolution/EvolutionWebhookMapper.js";
+import { MessageMapper } from "../../../domain/ports/MessageMapper.js";
 
 export class WebHookController {
-  constructor(private readonly receiveMessageUseCase: ReceiveMessageUseCase) {}
+  constructor(
+    private readonly receiveMessageUseCase: ReceiveMessageUseCase,
+    private readonly mapper: MessageMapper<any>,
+  ) {}
 
   async handle(req: Request, res: Response) {
-    const message = EvolutionWebhookMapper.toDomain(req.body);
+    const message = this.mapper.toDomain(req.body);
 
     await this.receiveMessageUseCase.execute(message);
 

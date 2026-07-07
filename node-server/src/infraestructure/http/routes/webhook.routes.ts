@@ -1,16 +1,9 @@
 import { Router } from "express";
-import { WebHookController } from "../controllers/WebHookController.js";
 
-import { EvolutionMessageSender } from "../../evolution/EvolutionMessageSender.js";
-import { ReceiveMessageUseCase } from "../../../application/use-cases/ReceiveMessageUseCase.js";
-
+import { makeWebHookEvolution } from "../../evolution/factories/makeWebHookEvolution.js";
 const webhookRoutes = Router();
 
-const evolutionMessageSender = new EvolutionMessageSender();
-
-const receiveMessageUseCase = new ReceiveMessageUseCase(evolutionMessageSender);
-
-const controller = new WebHookController(receiveMessageUseCase);
+const controller = makeWebHookEvolution();
 
 webhookRoutes.post("/webhook", (req, res) => {
   return controller.handle(req, res);
