@@ -9,7 +9,7 @@ export class ReceiveMessageUseCase {
       return;
     }
 
-    const response = `Ola ${message.name}, em que posso ajuda-lo?`;
+    const response = `Olá ${message.name}, em que posso ajudá-lo?`;
 
     await this.messageSender.send(message.phone, response);
   }
