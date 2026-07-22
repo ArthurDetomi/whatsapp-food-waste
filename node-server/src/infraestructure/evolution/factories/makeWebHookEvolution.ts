@@ -5,11 +5,14 @@ import { ReceiveMessageUseCase } from "../../../application/use-cases/ReceiveMes
 import { EvolutionMessageSender } from "../EvolutionMessageSender.js";
 
 import { EvolutionWebhookMapper } from "../EvolutionWebhookMapper.js";
+import { GeminiAnalyzer } from "../../ai/gemini/GeminiAnalyzer.js";
 
 export function makeWebHookEvolution() {
   const sender = new EvolutionMessageSender();
 
-  const useCase = new ReceiveMessageUseCase(sender);
+  const geminiAnalyzer = new GeminiAnalyzer();
+
+  const useCase = new ReceiveMessageUseCase(sender, geminiAnalyzer);
 
   const mapper = new EvolutionWebhookMapper();
 

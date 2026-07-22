@@ -1,3 +1,4 @@
 credentials
 .env
 node_modules
+node-server/.gitignore
