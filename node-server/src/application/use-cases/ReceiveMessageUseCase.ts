@@ -1,12 +1,11 @@
 import { IncomingMessage } from "../../domain/entities/IncomingMessage.js";
 import { MessageSender } from "../../domain/ports/MessageSender.js";
-import { AIAnalyzer } from "../../domain/ports/AIAnalyzer.js";
-import { AnalysisResult } from "../../domain/ai/AnalysisResult.js";
+import { FoodAssistant } from "../../domain/ports/FoodAssistant.js";
 
 export class ReceiveMessageUseCase {
   constructor(
     private readonly messageSender: MessageSender,
-    private readonly aiAnalyzer: AIAnalyzer,
+    private readonly foodAssistant: FoodAssistant,
   ) {}
 
   async execute(message: IncomingMessage): Promise<void> {
@@ -14,8 +13,8 @@ export class ReceiveMessageUseCase {
       return;
     }
 
-    const analysis = await this.aiAnalyzer.analyze(message);
+    const response = await this.foodAssistant.process(message);
 
-    await this.messageSender.send(message.phone, analysis.response);
+    await this.messageSender.send(message.phone, response.message);
   }
 }

@@ -7,21 +7,27 @@ export class EvolutionWebhookMapper implements MessageMapper<any> {
     const data = payload.data;
 
     const name = data.Info.PushName;
-
     const phone = data.Info.Sender.replace("@s.whatsapp.net", "");
-
-    const text = data.Message.conversation;
-
     const fromMe = data.Info.IsFromMe;
 
-    const response = new IncomingMessage({
-      name: name,
-      phone: phone,
-      text: text,
-      fromMe: fromMe,
-      type: MessageType.TEXT,
-    });
+    if (data.Info.MediaType === "image") {
+      return new IncomingMessage({
+        name,
+        phone,
+        fromMe,
+        type: MessageType.IMAGE,
+        mediaBase64: data.Message.base64,
+        mediaUrl: data.Message.imageMessage.URL,
+        mimeType: data.Message.imageMessage.mimetype,
+      });
+    }
 
-    return response;
+    return new IncomingMessage({
+      name,
+      phone,
+      fromMe,
+      type: MessageType.TEXT,
+      text: data.Message.conversation,
+    });
   }
 }

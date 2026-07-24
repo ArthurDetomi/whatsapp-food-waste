@@ -1,6 +1,5 @@
 import { MessageType } from "./MessageType.js";
 
-// 1. Criamos uma Interface para definir os tipos dos argumentos
 export interface IncomingMessageProps {
   name: string;
   phone: string;
@@ -8,6 +7,7 @@ export interface IncomingMessageProps {
   type: MessageType;
   text?: string;
   mediaUrl?: string;
+  mediaBase64?: string;
   fileName?: string;
   mimeType?: string;
 }
@@ -19,6 +19,7 @@ export class IncomingMessage {
   public readonly type: MessageType;
   public readonly text?: string;
   public readonly mediaUrl?: string;
+  public readonly mediaBase64?: string;
   public readonly fileName?: string;
   public readonly mimeType?: string;
 
@@ -29,6 +30,7 @@ export class IncomingMessage {
     this.type = props.type;
     this.text = props.text;
     this.mediaUrl = props.mediaUrl;
+    this.mediaBase64 = props.mediaBase64;
     this.fileName = props.fileName;
     this.mimeType = props.mimeType;
   }
