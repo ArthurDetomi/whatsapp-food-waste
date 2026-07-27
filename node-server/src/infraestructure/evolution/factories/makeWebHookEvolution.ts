@@ -7,11 +7,12 @@ import { EvolutionWebhookMapper } from "../EvolutionWebhookMapper.js";
 import { GeminiFoodAssistant } from "../../ai/gemini/GeminiFoodAssistant.js";
 import { InMemoryConversationRepository } from "../../conversation/InMemoryConversationRepository.js";
 import { WhatsAppAIResponseFormatter } from "../WhatAppAIResponseFormatter.js";
+import { RedisConversationRepository } from "../../conversation/RedisConverstationRepository.js";
 
 export function makeWebHookEvolution() {
   const sender = new EvolutionMessageSender();
 
-  const conversationRepository = new InMemoryConversationRepository();
+  const conversationRepository = new RedisConversationRepository();
 
   const foodAssistant = new GeminiFoodAssistant(conversationRepository);
 

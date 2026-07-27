@@ -7,6 +7,7 @@ const EVOLUTION_API = process.env.EVOLUTION_API;
 const EVOLUTION_INSTANCE = process.env.EVOLUTION_INSTANCE;
 const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const REDIS_URL = process.env.REDIS_URL;
 
 export {
   PORT,
@@ -14,4 +15,5 @@ export {
   EVOLUTION_API_KEY,
   EVOLUTION_INSTANCE,
   GEMINI_API_KEY,
+  REDIS_URL,
 };
