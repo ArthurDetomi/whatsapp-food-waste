@@ -7,7 +7,10 @@ export interface AIResponse {
   message: string;
 
   /**
-   * Lista de alimentos identificados.
+   * Lista de alimentos a serem apresentados ao usuário.
+   *
+   * Quando omitida, significa que a resposta não precisa exibir
+   * uma lista de alimentos.
    */
-  detectedFoods: DetectedFood[];
+  detectedFoods?: DetectedFood[];
 }

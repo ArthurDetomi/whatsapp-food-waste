@@ -3,7 +3,7 @@ import { AIResponseFormatter } from "../../domain/ai/AIResponseFormatter.js";
 
 export class WhatsAppAIResponseFormatter implements AIResponseFormatter {
   format(response: AIResponse): string {
-    if (response.detectedFoods.length === 0) {
+    if (!response.detectedFoods?.length) {
       return response.message;
     }
 

@@ -8,7 +8,8 @@ export const aiResponseSchema = {
 
     detectedFoods: {
       type: "array",
-      description: "Alimentos identificados ou mencionados na solicitação.",
+      description:
+        "Lista de alimentos que devem ser apresentados ao usuário nesta resposta. Omita este campo quando não fizer sentido exibir uma lista de alimentos.",
       items: {
         type: "object",
         properties: {
@@ -41,5 +42,5 @@ export const aiResponseSchema = {
     },
   },
 
-  required: ["message", "detectedFoods"],
+  required: ["message"],
 };

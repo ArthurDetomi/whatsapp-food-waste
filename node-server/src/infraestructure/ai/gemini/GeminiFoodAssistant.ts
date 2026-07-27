@@ -105,9 +105,17 @@ export class GeminiFoodAssistant implements FoodAssistant {
 
     const response = value as Record<string, unknown>;
 
-    return (
-      typeof response.message === "string" &&
-      Array.isArray(response.detectedFoods)
-    );
+    if (typeof response.message !== "string") {
+      return false;
+    }
+
+    if (
+      response.detectedFoods !== undefined &&
+      !Array.isArray(response.detectedFoods)
+    ) {
+      return false;
+    }
+
+    return true;
   }
 }
