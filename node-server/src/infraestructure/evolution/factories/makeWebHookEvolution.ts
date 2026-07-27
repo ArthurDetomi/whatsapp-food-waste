@@ -6,6 +6,7 @@ import { EvolutionWebhookMapper } from "../EvolutionWebhookMapper.js";
 
 import { GeminiFoodAssistant } from "../../ai/gemini/GeminiFoodAssistant.js";
 import { InMemoryConversationRepository } from "../../conversation/InMemoryConversationRepository.js";
+import { WhatsAppAIResponseFormatter } from "../WhatAppAIResponseFormatter.js";
 
 export function makeWebHookEvolution() {
   const sender = new EvolutionMessageSender();
@@ -14,7 +15,13 @@ export function makeWebHookEvolution() {
 
   const foodAssistant = new GeminiFoodAssistant(conversationRepository);
 
-  const useCase = new ReceiveMessageUseCase(sender, foodAssistant);
+  const responseFormatter = new WhatsAppAIResponseFormatter();
+
+  const useCase = new ReceiveMessageUseCase(
+    sender,
+    foodAssistant,
+    responseFormatter,
+  );
 
   const mapper = new EvolutionWebhookMapper();
 

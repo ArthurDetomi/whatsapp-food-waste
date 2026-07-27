@@ -1,12 +1,12 @@
 import { AIResponse } from "../../../domain/ai/AIResponse.js";
 import { IncomingMessage } from "../../../domain/entities/IncomingMessage.js";
+import { MessageType } from "../../../domain/entities/MessageType.js";
 import { FoodAssistant } from "../../../domain/ports/FoodAssistant.js";
+import { ConversationRepository } from "../../../domain/ports/ConversationRepository.js";
 
 import { gemini } from "./client.js";
 import { PromptBuilder } from "./PromptBuilder.js";
 import { aiResponseSchema } from "./schema.js";
-
-import { ConversationRepository } from "../../../domain/ports/ConversationRepository.js";
 
 export class GeminiFoodAssistant implements FoodAssistant {
   private readonly promptBuilder: PromptBuilder;
@@ -21,20 +21,7 @@ export class GeminiFoodAssistant implements FoodAssistant {
     const previousInteractionId =
       await this.conversationRepository.findLastInteractionId(message.phone);
 
-    const input =
-      message.mediaBase64 && message.mimeType
-        ? [
-            {
-              type: "text" as const,
-              text: prompt,
-            },
-            {
-              type: "image" as const,
-              data: message.mediaBase64,
-              mime_type: message.mimeType,
-            },
-          ]
-        : prompt;
+    const input = this.buildInput(message, prompt);
 
     const interaction = await gemini.interactions.create({
       model: "gemini-3.5-flash-lite",
@@ -67,10 +54,48 @@ export class GeminiFoodAssistant implements FoodAssistant {
     console.log({
       interactionId: interaction.id,
       previousInteractionId,
+      messageType: message.type,
+      mimeType: message.mimeType,
       response: parsedResponse,
     });
 
     return parsedResponse;
+  }
+
+  private buildInput(message: IncomingMessage, prompt: string) {
+    if (!message.mediaBase64 || !message.mimeType) {
+      return prompt;
+    }
+
+    if (message.type === MessageType.IMAGE) {
+      return [
+        {
+          type: "text" as const,
+          text: prompt,
+        },
+        {
+          type: "image" as const,
+          data: message.mediaBase64,
+          mime_type: message.mimeType,
+        },
+      ];
+    }
+
+    if (message.type === MessageType.VIDEO) {
+      return [
+        {
+          type: "text" as const,
+          text: prompt,
+        },
+        {
+          type: "video" as const,
+          data: message.mediaBase64,
+          mime_type: message.mimeType,
+        },
+      ];
+    }
+
+    return prompt;
   }
 
   private isAIResponse(value: unknown): value is AIResponse {

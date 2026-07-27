@@ -16,9 +16,30 @@ export class EvolutionWebhookMapper implements MessageMapper<any> {
         phone,
         fromMe,
         type: MessageType.IMAGE,
+        text: data.Message.imageMessage?.caption,
         mediaBase64: data.Message.base64,
-        mediaUrl: data.Message.imageMessage.URL,
-        mimeType: data.Message.imageMessage.mimetype,
+        mediaUrl: data.Message.imageMessage?.URL,
+        mimeType: data.Message.imageMessage?.mimetype,
+      });
+    }
+
+    const videoMessage =
+      data.Message.videoMessage ?? data.Message.documentMessage;
+
+    if (
+      ["video", "document"].includes(data.Info.MediaType) &&
+      videoMessage?.mimetype?.startsWith("video/")
+    ) {
+      return new IncomingMessage({
+        name,
+        phone,
+        fromMe,
+        type: MessageType.VIDEO,
+        text: videoMessage.caption,
+        mediaBase64: data.Message.base64,
+        mediaUrl: videoMessage.URL,
+        fileName: videoMessage.fileName,
+        mimeType: videoMessage.mimetype,
       });
     }
 
