@@ -15,9 +15,18 @@ export class ReceiveMessageUseCase {
       return;
     }
 
-    const response = await this.foodAssistant.process(message);
-    const formattedResponse = this.responseFormatter.format(response);
+    try {
+      const response = await this.foodAssistant.process(message);
+      const formattedResponse = this.responseFormatter.format(response);
 
-    await this.messageSender.send(message.phone, formattedResponse);
+      await this.messageSender.send(message.phone, formattedResponse);
+    } catch (error: any) {
+      console.error("Erro ao processar mensagem:", error);
+
+      await this.messageSender.send(
+        message.phone,
+        "⚠️ Estamos com problemas no momento. Tente novamente mais tarde.\n\n⚠️ We're experiencing some issues right now. Please try again later.",
+      );
+    }
   }
 }
