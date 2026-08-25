@@ -6,7 +6,10 @@ export class EvolutionWebhookMapper implements MessageMapper<any> {
   public toDomain(payload: any): IncomingMessage {
     const data = payload.data;
 
-    const name = data.Info.PushName;
+    const name =
+      data.Info.PushName && data.Info.PushName !== ""
+        ? data.Info.PushName
+        : "UsuárioDesconhecido";
     const phone = data.Info.Sender.replace("@s.whatsapp.net", "");
     const fromMe = data.Info.IsFromMe;
 

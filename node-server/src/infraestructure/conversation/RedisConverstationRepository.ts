@@ -1,7 +1,7 @@
 import { ConversationRepository } from "../../domain/ports/ConversationRepository.js";
-import { redisClient } from "../redis/client.js";
+import { redisClient } from "../storage/redis/client.js";
 
-import { CONVERSATION_TTL_SECONDS } from "../redis/constants.js";
+import { CONVERSATION_TTL_SECONDS } from "../storage/redis/constants.js";
 
 export class RedisConversationRepository implements ConversationRepository {
   private getConversationKey(phone: string): string {
