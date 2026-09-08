@@ -5,7 +5,6 @@ import { EvolutionMessageSender } from "../EvolutionMessageSender.js";
 import { EvolutionWebhookMapper } from "../EvolutionWebhookMapper.js";
 
 import { GeminiFoodAssistant } from "../../ai/gemini/GeminiFoodAssistant.js";
-import { InMemoryConversationRepository } from "../../conversation/InMemoryConversationRepository.js";
 import { WhatsAppAIResponseFormatter } from "../WhatAppAIResponseFormatter.js";
 import { RedisConversationRepository } from "../../conversation/RedisConverstationRepository.js";
 import { MongoUserRepository } from "../../storage/mongo/repositories/MongoUserRepository.js";
