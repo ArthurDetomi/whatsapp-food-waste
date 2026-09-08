@@ -1,1 +1,0 @@
-export const CONVERSATION_TTL_SECONDS = 60 * 60 * 24;
