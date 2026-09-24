@@ -7,7 +7,10 @@ import { FindOrCreateUserUseCase } from "./FindOrCreateUserUseCase.js";
 import { SaveMediaUseCase } from "./SaveMediaUseCase.js";
 import { SaveDetectedFoodsUseCase } from "./SaveDetectedFoodsUseCase.js";
 
-export class ReceiveMessageUseCase implements UseCase<IncomingMessage, void> {
+export class ReceiveMessageUseCase implements UseCase<
+  IncomingMessage,
+  string | null
+> {
   constructor(
     private readonly messageSender: MessageSender,
     private readonly foodAssistant: FoodAssistant,
@@ -17,9 +20,9 @@ export class ReceiveMessageUseCase implements UseCase<IncomingMessage, void> {
     private readonly saveDetectedFoodsUseCase: SaveDetectedFoodsUseCase,
   ) {}
 
-  async execute(message: IncomingMessage): Promise<void> {
+  async execute(message: IncomingMessage): Promise<string | null> {
     if (message.fromMe) {
-      return;
+      return null;
     }
 
     try {
@@ -54,13 +57,17 @@ export class ReceiveMessageUseCase implements UseCase<IncomingMessage, void> {
       const formattedResponse = this.responseFormatter.format(response);
 
       await this.messageSender.send(message.phone, formattedResponse);
+
+      return formattedResponse;
     } catch (error: any) {
       console.error("Erro ao processar mensagem:", error);
 
-      await this.messageSender.send(
-        message.phone,
-        "⚠️ Estamos com problemas no momento. Tente novamente mais tarde.\n\n⚠️ We're experiencing some issues right now. Please try again later.",
-      );
+      const errorMessage =
+        "⚠️ Estamos com problemas no momento. Tente novamente mais tarde.\n\n⚠️ We're experiencing some issues right now. Please try again later.";
+
+      await this.messageSender.send(message.phone, errorMessage);
+
+      return errorMessage;
     }
   }
 }
