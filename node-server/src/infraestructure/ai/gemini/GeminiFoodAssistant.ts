@@ -51,14 +51,6 @@ export class GeminiFoodAssistant implements FoodAssistant {
       interaction.id,
     );
 
-    console.log({
-      interactionId: interaction.id,
-      previousInteractionId,
-      messageType: message.type,
-      mimeType: message.mimeType,
-      response: parsedResponse,
-    });
-
     return parsedResponse;
   }
 

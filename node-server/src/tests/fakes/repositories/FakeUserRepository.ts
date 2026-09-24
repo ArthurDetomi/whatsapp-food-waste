@@ -15,8 +15,8 @@ export class FakeUserRepository implements UserRepository {
       id: randomUUID(),
     };
 
-    console.log(newUser);
     this.users.push(newUser);
+
     return newUser;
   }
 }
