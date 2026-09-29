@@ -20,6 +20,9 @@ import { AddPantryItemUseCase } from "../../../application/use-cases/AddPantryIt
 import { MongoPantryRepository } from "../../storage/mongo/repositories/MongoPantryRepository.js";
 import { ListPantryItemsUseCase } from "../../../application/use-cases/ListPantryItemsUseCase.js";
 import { ListPantryItemsTool } from "../../../domain/ai/tools/ListPantryItemsTool.js";
+import { RedisPantryContextRepository } from "../../storage/redis/repository/RedisPantryContextRepository.js";
+import { RemovePantryItemUseCase } from "../../../application/use-cases/RemovePantryItemUseCase.js";
+import { RemovePantryItemTool } from "../../../domain/ai/tools/RemovePantryItemTool.js";
 
 export function makeDevChatController() {
   const sender = new FakeMessageSender();
@@ -40,13 +43,29 @@ export function makeDevChatController() {
     pantryRepository,
   );
 
-  const listPantryItemsTool = new ListPantryItemsTool(listPantryItemsUseCase);
+  const removePantryItemUseCase = new RemovePantryItemUseCase(
+    userRepository,
+    pantryRepository,
+  );
+
+  const pantryContextRepository = new RedisPantryContextRepository();
+
+  const listPantryItemsTool = new ListPantryItemsTool(
+    listPantryItemsUseCase,
+    pantryContextRepository,
+  );
 
   const addPantryItemTool = new AddPantryItemTool(addPantryItemUseCase);
+
+  const removePantryItemTool = new RemovePantryItemTool(
+    removePantryItemUseCase,
+    pantryContextRepository,
+  );
 
   const toolRegistry = new ToolRegistry([
     addPantryItemTool,
     listPantryItemsTool,
+    removePantryItemTool,
   ]);
 
   const foodAssistant = new GeminiFoodAssistant(

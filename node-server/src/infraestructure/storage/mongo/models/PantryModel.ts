@@ -9,6 +9,7 @@ const PantrySchema = new mongoose.Schema(
     quantity: { type: Number, required: true },
     unit: { type: String, required: true },
     expirationDate: { type: Date, required: true },
+    isActive: { type: Boolean, required: true, default: true },
   },
   { timestamps: true },
 );

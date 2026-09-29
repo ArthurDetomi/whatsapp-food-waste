@@ -5,6 +5,7 @@ export interface PantryItemProps {
   quantity: number;
   unit: string;
   expirationDate: Date;
+  isActive: boolean;
 }
 
 export class PantryItem {
@@ -14,6 +15,7 @@ export class PantryItem {
   public readonly quantity: number;
   public readonly expirationDate: Date;
   public readonly unit: string;
+  public readonly isActive: boolean;
 
   constructor(props: PantryItemProps) {
     this.id = props.id;
@@ -22,5 +24,18 @@ export class PantryItem {
     this.quantity = props.quantity;
     this.expirationDate = props.expirationDate;
     this.unit = props.unit;
+    this.isActive = props.isActive;
+  }
+
+  deactivate(): PantryItem {
+    return new PantryItem({
+      id: this.id,
+      userId: this.userId,
+      name: this.name,
+      quantity: this.quantity,
+      unit: this.unit,
+      expirationDate: this.expirationDate,
+      isActive: false,
+    });
   }
 }

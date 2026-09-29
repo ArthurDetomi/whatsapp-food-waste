@@ -3,28 +3,35 @@ import { PantryRepository } from "../../domain/ports/PantryRepository.js";
 import { UserRepository } from "../../domain/ports/UserRepository.js";
 import { UseCase } from "./UseCase.js";
 
-export interface ListPantryItemsInput {
+export interface RemovePantryItemInput {
   phone: string;
+  itemId: string;
 }
 
-export class ListPantryItemsUseCase implements UseCase<
-  ListPantryItemsInput,
-  PantryItem[]
+export class RemovePantryItemUseCase implements UseCase<
+  RemovePantryItemInput,
+  PantryItem
 > {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly pantryRepository: PantryRepository,
   ) {}
 
-  async execute(input: ListPantryItemsInput): Promise<PantryItem[]> {
+  async execute(input: RemovePantryItemInput): Promise<PantryItem> {
     const user = await this.userRepository.findByPhone(input.phone);
 
     if (!user) {
       throw new Error("User not found!");
     }
 
-    const pantryList = await this.pantryRepository.findActiveByUserId(user.id!);
+    const item = await this.pantryRepository.findById(input.itemId);
 
-    return pantryList;
+    if (!item || item.userId !== user.id || !item.isActive) {
+      throw new Error("Pantry item not found!");
+    }
+
+    const inactiveItem = item.deactivate();
+
+    return this.pantryRepository.update(inactiveItem);
   }
 }
