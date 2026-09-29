@@ -14,18 +14,38 @@ import { FakeResponseFormatter } from "../../../tests/fakes/formatters/FakeRespo
 import { DevChatMapper } from "../DevChatMapper.js";
 import { FakeMediaRepository } from "../../../tests/fakes/repositories/FakeMediaRepository.js";
 import { DevChatController } from "../../http/controllers/DevChatController.js";
+import { ToolRegistry } from "../../ai/gemini/ToolRegistry.js";
+import { AddPantryItemTool } from "../../../domain/ai/tools/AddPantryItemTool.js";
+import { AddPantryItemUseCase } from "../../../application/use-cases/AddPantryItemUseCase.js";
+import { MongoPantryRepository } from "../../storage/mongo/repositories/MongoPantryRepository.js";
 
 export function makeDevChatController() {
   const sender = new FakeMessageSender();
 
   const conversationRepository = new RedisConversationRepository();
 
-  const foodAssistant = new GeminiFoodAssistant(conversationRepository);
+  const userRepository = new MongoUserRepository();
+
+  const pantryRepository = new MongoPantryRepository();
+
+  const addPantryItemUseCase = new AddPantryItemUseCase(
+    userRepository,
+    pantryRepository,
+  );
+
+  const addPantryItemTool = new AddPantryItemTool(addPantryItemUseCase);
+
+  const toolRegistry = new ToolRegistry([addPantryItemTool]);
+
+  const foodAssistant = new GeminiFoodAssistant(
+    conversationRepository,
+    toolRegistry,
+  );
 
   const responseFormatter = new FakeResponseFormatter();
 
-  const userRepository = new MongoUserRepository();
   const mediaRepository = new FakeMediaRepository();
+
   const foodRepository = new MongoFoodRepository();
 
   const findOrCreateUserUseCase = new FindOrCreateUserUseCase(userRepository);

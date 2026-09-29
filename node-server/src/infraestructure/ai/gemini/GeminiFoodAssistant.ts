@@ -7,11 +7,15 @@ import { ConversationRepository } from "../../../domain/ports/ConversationReposi
 import { gemini } from "./client.js";
 import { PromptBuilder } from "./PromptBuilder.js";
 import { aiResponseSchema } from "./schema.js";
+import { ToolRegistry } from "./ToolRegistry.js";
 
 export class GeminiFoodAssistant implements FoodAssistant {
   private readonly promptBuilder: PromptBuilder;
 
-  constructor(private readonly conversationRepository: ConversationRepository) {
+  constructor(
+    private readonly conversationRepository: ConversationRepository,
+    private readonly toolRegistry: ToolRegistry,
+  ) {
     this.promptBuilder = new PromptBuilder();
   }
 
@@ -23,16 +27,63 @@ export class GeminiFoodAssistant implements FoodAssistant {
 
     const input = this.buildInput(message, prompt);
 
-    const interaction = await gemini.interactions.create({
+    let interaction = await gemini.interactions.create({
       model: "gemini-3.5-flash-lite",
       input,
       previous_interaction_id: previousInteractionId,
+      tools: this.toolRegistry.getDefinitions(),
       response_format: {
         type: "text",
         mime_type: "application/json",
         schema: aiResponseSchema,
       },
     });
+
+    while (interaction.status === "requires_action") {
+      const functionCalls = interaction.steps.filter(
+        (step) => step.type === "function_call",
+      );
+
+      const results = [];
+
+      for (const call of functionCalls) {
+        const toolName = this.normalizeToolName(call.name);
+
+        const tool = this.toolRegistry.get(toolName);
+
+        if (!tool) {
+          throw new Error(`Tool não encontrada: ${call.name}`);
+        }
+
+        const result = await tool.execute(call.arguments, {
+          phone: message.phone,
+        });
+
+        results.push({
+          type: "function_result" as const,
+          name: call.name,
+          call_id: call.id,
+          result: [
+            {
+              type: "text" as const,
+              text: JSON.stringify(result),
+            },
+          ],
+        });
+      }
+
+      interaction = await gemini.interactions.create({
+        model: "gemini-3.5-flash-lite",
+        input: results,
+        previous_interaction_id: previousInteractionId,
+        tools: this.toolRegistry.getDefinitions(),
+        response_format: {
+          type: "text",
+          mime_type: "application/json",
+          schema: aiResponseSchema,
+        },
+      });
+    }
 
     const responseText = interaction.output_text;
 
@@ -109,5 +160,9 @@ export class GeminiFoodAssistant implements FoodAssistant {
     }
 
     return true;
+  }
+
+  private normalizeToolName(name: string): string {
+    return name.includes(":") ? name.split(":").pop()! : name;
   }
 }
