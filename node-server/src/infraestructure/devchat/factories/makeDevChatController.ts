@@ -18,6 +18,8 @@ import { ToolRegistry } from "../../ai/gemini/ToolRegistry.js";
 import { AddPantryItemTool } from "../../../domain/ai/tools/AddPantryItemTool.js";
 import { AddPantryItemUseCase } from "../../../application/use-cases/AddPantryItemUseCase.js";
 import { MongoPantryRepository } from "../../storage/mongo/repositories/MongoPantryRepository.js";
+import { ListPantryItemsUseCase } from "../../../application/use-cases/ListPantryItemsUseCase.js";
+import { ListPantryItemsTool } from "../../../domain/ai/tools/ListPantryItemsTool.js";
 
 export function makeDevChatController() {
   const sender = new FakeMessageSender();
@@ -33,9 +35,19 @@ export function makeDevChatController() {
     pantryRepository,
   );
 
+  const listPantryItemsUseCase = new ListPantryItemsUseCase(
+    userRepository,
+    pantryRepository,
+  );
+
+  const listPantryItemsTool = new ListPantryItemsTool(listPantryItemsUseCase);
+
   const addPantryItemTool = new AddPantryItemTool(addPantryItemUseCase);
 
-  const toolRegistry = new ToolRegistry([addPantryItemTool]);
+  const toolRegistry = new ToolRegistry([
+    addPantryItemTool,
+    listPantryItemsTool,
+  ]);
 
   const foodAssistant = new GeminiFoodAssistant(
     conversationRepository,

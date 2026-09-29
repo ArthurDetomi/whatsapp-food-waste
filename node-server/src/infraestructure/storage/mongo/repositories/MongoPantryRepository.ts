@@ -23,4 +23,12 @@ export class MongoPantryRepository implements PantryRepository {
       expirationDate: savedDoc.expirationDate,
     });
   }
+
+  async findByUserId(userId: string): Promise<PantryItem[]> {
+    const items = await PantryModel.find({
+      userId: userId,
+    });
+
+    return items;
+  }
 }
