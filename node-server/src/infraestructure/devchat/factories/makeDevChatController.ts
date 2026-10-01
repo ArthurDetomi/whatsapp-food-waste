@@ -23,6 +23,8 @@ import { ListPantryItemsTool } from "../../../domain/ai/tools/ListPantryItemsToo
 import { RedisPantryContextRepository } from "../../storage/redis/repository/RedisPantryContextRepository.js";
 import { RemovePantryItemUseCase } from "../../../application/use-cases/RemovePantryItemUseCase.js";
 import { RemovePantryItemTool } from "../../../domain/ai/tools/RemovePantryItemTool.js";
+import { UpdatePantryItemUseCase } from "../../../application/use-cases/UpdatePantryItemUseCase.js";
+import { UpdatePantryItemTool } from "../../../domain/ai/tools/UpdatePantryItemTool.js";
 
 export function makeDevChatController() {
   const sender = new FakeMessageSender();
@@ -48,6 +50,11 @@ export function makeDevChatController() {
     pantryRepository,
   );
 
+  const updatePantryItemUseCase = new UpdatePantryItemUseCase(
+    userRepository,
+    pantryRepository,
+  );
+
   const pantryContextRepository = new RedisPantryContextRepository();
 
   const listPantryItemsTool = new ListPantryItemsTool(
@@ -62,10 +69,16 @@ export function makeDevChatController() {
     pantryContextRepository,
   );
 
+  const updatePantryItemTool = new UpdatePantryItemTool(
+    updatePantryItemUseCase,
+    pantryContextRepository,
+  );
+
   const toolRegistry = new ToolRegistry([
     addPantryItemTool,
     listPantryItemsTool,
     removePantryItemTool,
+    updatePantryItemTool,
   ]);
 
   const foodAssistant = new GeminiFoodAssistant(

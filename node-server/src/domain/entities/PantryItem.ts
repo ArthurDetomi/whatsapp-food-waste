@@ -38,4 +38,20 @@ export class PantryItem {
       isActive: false,
     });
   }
+
+  update(props: {
+    name?: string;
+    expirationDate?: Date;
+    quantity?: number;
+  }): PantryItem {
+    return new PantryItem({
+      id: this.id,
+      userId: this.userId,
+      name: props.name ?? this.name,
+      quantity: props.quantity ?? this.quantity,
+      unit: this.unit,
+      expirationDate: props.expirationDate ?? this.expirationDate,
+      isActive: this.isActive,
+    });
+  }
 }
