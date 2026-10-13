@@ -26,6 +26,32 @@ export class MongoPantryRepository implements PantryRepository {
     });
   }
 
+  async saveMany(items: PantryItem[]): Promise<PantryItem[]> {
+    const documents = items.map((item) => ({
+      userId: item.userId,
+      name: item.name,
+      quantity: item.quantity,
+      unit: item.unit,
+      expirationDate: item.expirationDate,
+      isActive: item.isActive,
+    }));
+
+    const savedDocuments = await PantryModel.insertMany(documents);
+
+    return savedDocuments.map(
+      (document) =>
+        new PantryItem({
+          id: document._id.toString(),
+          userId: document.userId,
+          name: document.name,
+          quantity: document.quantity,
+          unit: document.unit,
+          expirationDate: document.expirationDate,
+          isActive: document.isActive,
+        }),
+    );
+  }
+
   async findActiveByUserId(userId: string): Promise<PantryItem[]> {
     const items = await PantryModel.find({
       userId: userId,
@@ -91,5 +117,20 @@ export class MongoPantryRepository implements PantryRepository {
       expirationDate: item.expirationDate,
       isActive: item.isActive,
     });
+  }
+
+  async deactivateMany(userId: string, itemIds: string[]): Promise<number> {
+    const result = await PantryModel.updateMany(
+      {
+        _id: { $in: itemIds },
+        userId,
+        isActive: true,
+      },
+      {
+        $set: { isActive: false },
+      },
+    );
+
+    return result.modifiedCount;
   }
 }

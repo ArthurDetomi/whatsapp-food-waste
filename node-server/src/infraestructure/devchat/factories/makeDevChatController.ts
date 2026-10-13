@@ -15,14 +15,14 @@ import { DevChatMapper } from "../DevChatMapper.js";
 import { FakeMediaRepository } from "../../../tests/fakes/repositories/FakeMediaRepository.js";
 import { DevChatController } from "../../http/controllers/DevChatController.js";
 import { ToolRegistry } from "../../ai/gemini/ToolRegistry.js";
-import { AddPantryItemTool } from "../../../domain/ai/tools/AddPantryItemTool.js";
-import { AddPantryItemUseCase } from "../../../application/use-cases/AddPantryItemUseCase.js";
+import { AddPantryItemsTool } from "../../../domain/ai/tools/AddPantryItemsTool.js";
+import { AddPantryItemsUseCase } from "../../../application/use-cases/AddPantryItemsUseCase.js";
 import { MongoPantryRepository } from "../../storage/mongo/repositories/MongoPantryRepository.js";
 import { ListPantryItemsUseCase } from "../../../application/use-cases/ListPantryItemsUseCase.js";
 import { ListPantryItemsTool } from "../../../domain/ai/tools/ListPantryItemsTool.js";
 import { RedisPantryContextRepository } from "../../storage/redis/repository/RedisPantryContextRepository.js";
-import { RemovePantryItemUseCase } from "../../../application/use-cases/RemovePantryItemUseCase.js";
-import { RemovePantryItemTool } from "../../../domain/ai/tools/RemovePantryItemTool.js";
+import { RemovePantryItemsUseCase } from "../../../application/use-cases/RemovePantryItemsUseCase.js";
+import { RemovePantryItemsTool } from "../../../domain/ai/tools/RemovePantryItemsTool.js";
 import { UpdatePantryItemUseCase } from "../../../application/use-cases/UpdatePantryItemUseCase.js";
 import { UpdatePantryItemTool } from "../../../domain/ai/tools/UpdatePantryItemTool.js";
 
@@ -35,7 +35,7 @@ export function makeDevChatController() {
 
   const pantryRepository = new MongoPantryRepository();
 
-  const addPantryItemUseCase = new AddPantryItemUseCase(
+  const addPantryItemUseCase = new AddPantryItemsUseCase(
     userRepository,
     pantryRepository,
   );
@@ -45,7 +45,7 @@ export function makeDevChatController() {
     pantryRepository,
   );
 
-  const removePantryItemUseCase = new RemovePantryItemUseCase(
+  const removePantryItemUseCase = new RemovePantryItemsUseCase(
     userRepository,
     pantryRepository,
   );
@@ -62,9 +62,9 @@ export function makeDevChatController() {
     pantryContextRepository,
   );
 
-  const addPantryItemTool = new AddPantryItemTool(addPantryItemUseCase);
+  const addPantryItemTool = new AddPantryItemsTool(addPantryItemUseCase);
 
-  const removePantryItemTool = new RemovePantryItemTool(
+  const removePantryItemTool = new RemovePantryItemsTool(
     removePantryItemUseCase,
     pantryContextRepository,
   );

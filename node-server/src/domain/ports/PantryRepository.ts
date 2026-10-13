@@ -8,4 +8,8 @@ export interface PantryRepository {
   update(item: PantryItem): Promise<PantryItem>;
 
   findById(id: string): Promise<PantryItem>;
+
+  saveMany(items: PantryItem[]): Promise<PantryItem[]>;
+
+  deactivateMany(userId: string, itemIds: string[]): Promise<number>;
 }

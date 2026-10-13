@@ -73,7 +73,7 @@ export class GeminiFoodAssistant implements FoodAssistant {
       }
 
       interaction = await gemini.interactions.create({
-        model: "gemini-3.5-flash-lite",
+        model: "gemini-3.5-flash",
         input: results,
         previous_interaction_id: interaction.id,
         tools: this.toolRegistry.getDefinitions(),
