@@ -25,6 +25,8 @@ export class ListPantryItemsUseCase implements UseCase<
 
     const pantryList = await this.pantryRepository.findActiveByUserId(user.id!);
 
-    return pantryList;
+    return pantryList.sort(
+      (a, b) => a.expirationDate.getTime() - b.expirationDate.getTime(),
+    );
   }
 }
