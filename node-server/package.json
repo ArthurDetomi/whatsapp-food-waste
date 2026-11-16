@@ -17,9 +17,11 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongoose": "^8.24.4",
+    "node-cron": "^4.6.0",
     "oci-common": "^2.139.2",
     "oci-objectstorage": "^2.139.2",
-    "redis": "^6.1.0"
+    "redis": "^6.1.0",
+    "resend": "^6.38.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
