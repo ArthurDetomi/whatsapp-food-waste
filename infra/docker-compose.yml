@@ -41,7 +41,7 @@ services:
       retries: 10
 
   evolution-go:
-    image: evoapicloud/evolution-go:0.7.2
+    image: evoapicloud/evolution-go:0.7.3
     container_name: evolution-go
 
     restart: unless-stopped
